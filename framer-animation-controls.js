@@ -9,6 +9,7 @@
   EditableAnimationDefinition = (function() {
     function EditableAnimationDefinition(id, args) {
       this.id = id;
+      this.loop = false;
       this.parseAnimationOptions(_.pick(args, animationProperties));
       this.createControls();
       animationDefinitionsById[id] = this;
@@ -113,11 +114,19 @@
         this.gui.add(this, 'delay');
       }
 
+      var loopControl = this.gui.add(this, 'loop');
+      loopControl.onChange(this.loopIfNeeded.bind(this));
       this.gui.add(this, 'repeat');
       this.gui.add(this, 'reverse');
       this.gui.open();
 
       gui.remember(this);
+    }
+
+    EditableAnimationDefinition.prototype.loopIfNeeded = function() {
+      if (this.loop) {
+        this.repeat();
+      }
     }
 
     EditableAnimationDefinition.prototype.resetView = function() {
@@ -138,6 +147,7 @@
 
       options.properties = this.animation.properties;
       this.animation = new Animation(options)
+      this.animation.on('end', this.loopIfNeeded.bind(this));
       this.animation.start();
     }
 
