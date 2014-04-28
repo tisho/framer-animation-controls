@@ -1,5 +1,7 @@
 # Animation Controls for Framer (Demo)
 
+[Live Demo: http://tisho.co/framer-animation-controls/index.html](http://tisho.co/framer-animation-controls/index.html)
+
 This is an example of using [dat.GUI](https://github.com/dataarts/dat.gui) to provide some simple controls for animations built with Framer.
 
 I'd often set up an animation that wouldn't look right, so I wanted a way to experiment with the animation parameters without actually going through a full reload of the page.
@@ -12,7 +14,7 @@ Whenever an animation with a defined `aid` (animation ID) property runs, a new c
 
 ## Use It In Your Own Project
 
-1. Download `dat.gui.js` and `framer-animation-controls.js` from this repo.
+1. Download [dat.gui.js](https://github.com/tisho/framer-animation-controls/blob/master/dat.gui.js) and [https://github.com/tisho/framer-animation-controls/blob/master/framer-animation-controls.js](framer-animation-controls.js) from this repo.
 2. Include the two files in your `index.html`, after the `<script>` tag for `framer.js` and before your `app.js`
 
   ```html
