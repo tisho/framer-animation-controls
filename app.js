@@ -22,6 +22,14 @@ var block3 = new Layer({
 	style: { backgroundColor: utils.randomColor(0.8) }
 });
 
+var block4 = new Layer({
+	width: 100,
+	height: 100,
+	x: 50,
+	y: 500,
+	style: { backgroundColor: utils.randomColor(0.8) }
+});
+
 block1.on('click', function() {
 	block1.animate({
 		aid: 'Block 1 Animation',
@@ -46,5 +54,14 @@ block3.on('click', function() {
 		curve: 'bezier-curve(.42, 1, .42, 1)',
 		time: 0.5,
 		delay: 0.1
+	})
+});
+
+block4.on('click', function() {
+	block4.animate({
+		aid: 'Block 4 Animation',
+		properties: { x: (block1.x > 50 ? 50 : 300) },
+		curve: 'spring',
+		curveOptions: { tension: 200, friction: 20, velocity: 0 }
 	})
 });

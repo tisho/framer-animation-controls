@@ -1,7 +1,6 @@
 (function() {
   var animationDefinitionsById = {},
-      animationProperties = ['time', 'curve', 'delay', 'layer', 'debug', 'repeat'],
-      // animatableProperties = Animation.prototype.AnimatableMatrixProperties.concat(Object.keys(Animation.prototype.AnimatableFilterProperties)).concat(Object.keys(Animation.prototype.AnimatableCSSProperties)),
+      animationProperties = ['time', 'curve', 'curveOptions', 'delay', 'layer', 'debug', 'repeat'],
       oldAnimate = Layer.prototype.animate,
       gui = new dat.GUI(),
       EditableAnimationDefinition;
@@ -29,6 +28,29 @@
           this.bezierB = parseFloat(match[2]);
           this.bezierC = parseFloat(match[3]);
           this.bezierD = parseFloat(match[4]);
+        } else if (options.curve == 'spring' && options.curveOptions) {
+          this.curveType = 'spring';
+          this.springTension = options.curveOptions.tension;
+          this.springFriction = options.curveOptions.friction;
+          this.springVelocity = options.curveOptions.velocity;
+        } else if (options.curve == 'bezier-curve' && options.curveOptions) {
+          this.curveType = 'bezier-curve';
+
+          if (_.isString(options.curveOptions)) {
+            this.curveType = 'bezier-predefined';
+            this.curve = options.curveOptions;
+          } else {
+            if (_.isArray(options.curveOptions)) {
+              values = options.curveOptions;
+            } else if (options.curveOptions.values && _.isArray(options.curveOptions.values)) {
+              values = options.curveOptions.values;
+            }
+
+            this.bezierA = values[0];
+            this.bezierB = values[1];
+            this.bezierC = values[2];
+            this.bezierD = values[3];
+          }
         } else {
           this.curveType = 'bezier-predefined';
           this.curve = options.curve;
@@ -50,10 +72,12 @@
       if (this.curveType) {
         switch(this.curveType) {
         case 'spring':
-          options.curve = 'spring(' + [this.springTension, this.springFriction, this.springVelocity].join(',') + ')';
+          options.curve = 'spring';
+          options.curveOptions = { tension: this.springTension, friction: this.springFriction, velocity: this.springVelocity}
           break;
         case 'bezier-curve':
-          options.curve = 'bezier-curve(' + [this.bezierA, this.bezierB, this.bezierC, this.bezierD].join(',') + ')';
+          options.curve = 'bezier-curve';
+          options.curveOptions = [this.bezierA, this.bezierB, this.bezierC, this.bezierD];
           break;
         case 'bezier-predefined':
           options.curve = 'bezier-curve';
@@ -119,7 +143,6 @@
     }
 
     EditableAnimationDefinition.prototype.resetLayer = function() {
-      // var originalProperties = _.pick(this.animation._originalProperties, animatableProperties);
       var originalProperties = this.animation._originalState;
 
       for (property in originalProperties) {
