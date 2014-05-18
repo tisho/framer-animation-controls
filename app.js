@@ -1,4 +1,4 @@
-var block1 = new View({
+var block1 = new Layer({
 	width: 100,
 	height: 100,
 	x: 50,
@@ -6,7 +6,7 @@ var block1 = new View({
 	style: { backgroundColor: utils.randomColor(0.8) }
 });
 
-var block2 = new View({
+var block2 = new Layer({
 	width: 100,
 	height: 100,
 	x: 50,
@@ -14,7 +14,7 @@ var block2 = new View({
 	style: { backgroundColor: utils.randomColor(0.8) }
 });
 
-var block3 = new View({
+var block3 = new Layer({
 	width: 100,
 	height: 100,
 	x: 50,
@@ -26,7 +26,7 @@ block1.on('click', function() {
 	block1.animate({
 		aid: 'Block 1 Animation',
 		properties: { x: (block1.x > 50 ? 50 : 300) },
-		curve: 'spring(200,20,200)'
+		curve: 'spring(200,20,0)'
 	})
 });
 
@@ -35,7 +35,7 @@ block2.on('click', function() {
 		aid: 'Block 2 Animation',
 		properties: { x: (block2.x > 50 ? 50 : 300) },
 		curve: 'ease-in-out',
-		time: 500
+		time: 0.5
 	})
 });
 
@@ -44,7 +44,7 @@ block3.on('click', function() {
 		aid: 'Block 3 Animation',
 		properties: { x: (block3.x > 50 ? 50 : 300) },
 		curve: 'bezier-curve(.42, 1, .42, 1)',
-		time: 500,
-		delay: 100
+		time: 0.5,
+		delay: 0.1
 	})
 });

@@ -1,8 +1,8 @@
 (function() {
   var animationDefinitionsById = {},
-      animationProperties = ['time', 'curve', 'origin', 'delay'],
-      animatableProperties = Animation.prototype.AnimatableMatrixProperties.concat(Object.keys(Animation.prototype.AnimatableFilterProperties)).concat(Object.keys(Animation.prototype.AnimatableCSSProperties)),
-      oldAnimate = View.prototype.animate,
+      animationProperties = ['time', 'curve', 'delay', 'layer', 'debug', 'repeat'],
+      // animatableProperties = Animation.prototype.AnimatableMatrixProperties.concat(Object.keys(Animation.prototype.AnimatableFilterProperties)).concat(Object.keys(Animation.prototype.AnimatableCSSProperties)),
+      oldAnimate = Layer.prototype.animate,
       gui = new dat.GUI(),
       EditableAnimationDefinition;
 
@@ -39,10 +39,6 @@
         this.time = parseInt(options.time, 10);
       }
 
-      if (options.origin) {
-        this.origin = options.origin;
-      }
-
       if (options.delay) {
         this.delay = options.delay;
       }
@@ -60,17 +56,14 @@
           options.curve = 'bezier-curve(' + [this.bezierA, this.bezierB, this.bezierC, this.bezierD].join(',') + ')';
           break;
         case 'bezier-predefined':
-          options.curve = this.curve;
+          options.curve = 'bezier-curve';
+          options.curveOptions = this.curve;
           break;
         }
       }
 
       if (this.time) {
         options.time = this.time;
-      }
-
-      if (this.origin) {
-        options.origin = this.origin;
       }
 
       if (this.delay) {
@@ -106,11 +99,7 @@
         this.gui.add(this, 'time');
       }
 
-      if (this.origin) {
-        this.gui.add(this, 'origin');
-      }
-
-      if (this.origin) {
+      if (this.delay) {
         this.gui.add(this, 'delay');
       }
 
@@ -129,23 +118,24 @@
       }
     }
 
-    EditableAnimationDefinition.prototype.resetView = function() {
-      var originalProperties = _.pick(this.animation._originalProperties, animatableProperties);
+    EditableAnimationDefinition.prototype.resetLayer = function() {
+      // var originalProperties = _.pick(this.animation._originalProperties, animatableProperties);
+      var originalProperties = this.animation._originalState;
 
       for (property in originalProperties) {
-        if (this.animation.properties.hasOwnProperty(property)) {
-          this.animation.view[property] = originalProperties[property];
+        if (this.animation.options.properties.hasOwnProperty(property)) {
+          this.animation.options.layer[property] = originalProperties[property];
         }
       }
     }
 
     EditableAnimationDefinition.prototype.repeat = function() {
-      this.resetView();
+      this.resetLayer();
 
-      var options = _.pick(this.animation, Animation.prototype.AnimationProperties);
+      var options = _.pick(this.animation.options, animationProperties);
       _.extend(options, this.toAnimationOptions());
 
-      options.properties = this.animation.properties;
+      options.properties = this.animation.options.properties;
       this.animation = new Animation(options)
       this.animation.on('end', this.loopIfNeeded.bind(this));
       this.animation.start();
@@ -158,7 +148,7 @@
     return EditableAnimationDefinition;
   })();
 
-  View.prototype.animate = function(args, callback) {
+  Layer.prototype.animate = function(args, callback) {
     if ('aid' in args) {
       var animationDefinition = animationDefinitionsById[args.aid] || new EditableAnimationDefinition(args.aid, args);
       _.extend(args, animationDefinition.toAnimationOptions());
