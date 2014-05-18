@@ -60,7 +60,7 @@ block3.on('click', function() {
 block4.on('click', function() {
 	block4.animate({
 		aid: 'Block 4 Animation',
-		properties: { x: (block1.x > 50 ? 50 : 300) },
+		properties: { x: (block4.x > 50 ? 50 : 300) },
 		curve: 'spring',
 		curveOptions: { tension: 200, friction: 20, velocity: 0 }
 	})
